@@ -23,6 +23,7 @@
       --text-muted: #9ca3af;
       --text-dim: #6b7280;
       --border: rgba(168, 85, 247, 0.15);
+      --border-light: rgba(255, 255, 255, 0.05);
       --success: #22c55e;
       --danger: #ef4444;
       --warning: #f59e0b;
@@ -357,9 +358,7 @@
       transition: all 0.2s;
       font-family: var(--font-body);
     }
-    .copy-btn:hover {
-      background: rgba(168,85,247,0.2);
-    }
+    .copy-btn:hover { background: rgba(168,85,247,0.2); }
     .copy-btn.copied {
       background: rgba(34, 197, 94, 0.15);
       color: var(--success);
@@ -443,30 +442,7 @@
       transition: color 0.3s;
     }
     .explorer-footer a:hover { color: var(--text); }
-
-    /* Animations */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-in {
-      animation: fadeIn 0.6s ease forwards;
-    }
-    .delay-1 { animation-delay: 0.1s; }
-    .delay-2 { animation-delay: 0.2s; }
-    .delay-3 { animation-delay: 0.3s; }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .stats-grid { grid-template-columns: 1fr; }
-      .detail-grid { grid-template-columns: 1fr; }
-      .nav-links { display: none; }
-      .status-bar { flex-direction: column; align-items: flex-start; }
-      .blocks-table { font-size: 0.75rem; }
-      .blocks-table th, .blocks-table td { padding: 10px 8px; }
-    }
   </style>
-<base target="_blank">
 </head>
 <body>
 
@@ -500,7 +476,7 @@
   <main class="explorer-main">
 
     <!-- Status Bar -->
-    <div class="status-bar animate-in">
+    <div class="status-bar">
       <div class="status-live">
         <div class="status-dot"></div>
         <span>LIVE (SYNCED)</span>
@@ -513,25 +489,25 @@
 
     <!-- Stats Grid -->
     <div class="stats-grid">
-      <div class="stat-card animate-in delay-1">
+      <div class="stat-card">
         <div class="stat-label"><i class="fas fa-cube"></i> ULTIMO BLOCCO</div>
-        <div class="stat-value" id="block-height">#7,473</div>
-        <div class="stat-sub" id="block-height-raw">Block #7473</div>
+        <div class="stat-value" id="block-height">--</div>
+        <div class="stat-sub" id="block-height-raw">In attesa del nodo...</div>
       </div>
-      <div class="stat-card animate-in delay-2">
+      <div class="stat-card">
         <div class="stat-label"><i class="fas fa-link"></i> CHAIN ID</div>
-        <div class="stat-value accent" id="network-id">luxa-1</div>
-        <div class="stat-sub">Cosmos SDK L1</div>
+        <div class="stat-value accent" id="network-id">--</div>
+        <div class="stat-sub">Cosmos Tendermint Engine</div>
       </div>
-      <div class="stat-card animate-in delay-3">
+      <div class="stat-card">
         <div class="stat-label"><i class="fas fa-server"></i> NODO MONIKER</div>
-        <div class="stat-value success" id="node-moniker">luxa-genesis-validator</div>
+        <div class="stat-value success" id="node-moniker">--</div>
         <div class="stat-sub">Genesis Validator</div>
       </div>
     </div>
 
     <!-- Block Details -->
-    <div class="detail-card animate-in">
+    <div class="detail-card">
       <div class="detail-header">
         <h2><i class="fas fa-microchip"></i> Dettagli Ultimo Blocco</h2>
         <button class="refresh-btn" onclick="refreshData()" id="refreshBtn">
@@ -541,24 +517,18 @@
       <div class="detail-grid">
         <div class="detail-item">
           <div class="detail-key"><i class="fas fa-clock"></i> Timestamp</div>
-          <div class="detail-value time" id="block-time">16:51:37</div>
+          <div class="detail-value time" id="block-time">--:--:--</div>
         </div>
         <div class="detail-item">
           <div class="detail-key"><i class="fas fa-hashtag"></i> Block Hash</div>
           <div class="detail-value hash" id="block-hash">
-            E7AAE19D28902E1DA2BF8A50BB6C6011D8B56359CF39315016DD1DFD3E9AEF35
-            <button class="copy-btn" onclick="copyToClipboard(this, 'E7AAE19D28902E1DA2BF8A50BB6C6011D8B56359CF39315016DD1DFD3E9AEF35')">
-              <i class="fas fa-copy"></i> Copy
-            </button>
+            Caricamento...
           </div>
         </div>
         <div class="detail-item full-width">
           <div class="detail-key"><i class="fas fa-user-shield"></i> Indirizzo Proposer / Validatore</div>
           <div class="detail-value addr" id="proposer-addr">
-            EA2B6275ED04C0B375DEE2809CAF83078A538938
-            <button class="copy-btn" onclick="copyToClipboard(this, 'EA2B6275ED04C0B375DEE2809CAF83078A538938')">
-              <i class="fas fa-copy"></i> Copy
-            </button>
+            Caricamento...
           </div>
         </div>
         <div class="detail-item full-width">
@@ -574,54 +544,27 @@
     </div>
 
     <!-- Recent Blocks -->
-    <div class="blocks-card animate-in">
-      <h2><i class="fas fa-list"></i> Blocchi Recenti</h2>
+    <div class="blocks-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2><i class="fas fa-list"></i> Blocchi Recenti in Tempo Reale</h2>
+        <span style="font-size: 0.75rem; color: var(--text-dim); font-family: var(--font-mono);">Aggiornamento live (WSL2 CometBFT)</span>
+      </div>
       <div style="overflow-x: auto;">
         <table class="blocks-table">
           <thead>
             <tr>
               <th>Height</th>
-              <th>Hash</th>
+              <th>Block Hash</th>
               <th>Time</th>
               <th>Txs</th>
-              <th>Proposer</th>
+              <th>Proposer Address</th>
             </tr>
           </thead>
           <tbody id="blocks-tbody">
             <tr>
-              <td><span class="block-link">#7,473</span></td>
-              <td>E7AAE19D...EF35</td>
-              <td>16:51:37</td>
-              <td><span class="tx-count"><i class="fas fa-check-circle"></i> 0</span></td>
-              <td>EA2B62...8938</td>
-            </tr>
-            <tr>
-              <td><span class="block-link">#7,472</span></td>
-              <td>8F3C21A9...B412</td>
-              <td>16:51:32</td>
-              <td><span class="tx-count"><i class="fas fa-check-circle"></i> 0</span></td>
-              <td>EA2B62...8938</td>
-            </tr>
-            <tr>
-              <td><span class="block-link">#7,471</span></td>
-              <td>2D9E87F4...C789</td>
-              <td>16:51:27</td>
-              <td><span class="tx-count"><i class="fas fa-check-circle"></i> 0</span></td>
-              <td>EA2B62...8938</td>
-            </tr>
-            <tr>
-              <td><span class="block-link">#7,470</span></td>
-              <td>A1B5C6D7...E123</td>
-              <td>16:51:22</td>
-              <td><span class="tx-count"><i class="fas fa-check-circle"></i> 0</span></td>
-              <td>EA2B62...8938</td>
-            </tr>
-            <tr>
-              <td><span class="block-link">#7,469</span></td>
-              <td>4F8E12B3...A456</td>
-              <td>16:51:17</td>
-              <td><span class="tx-count"><i class="fas fa-check-circle"></i> 0</span></td>
-              <td>EA2B62...8938</td>
+              <td colspan="5" style="text-align: center; padding: 24px; color: var(--text-dim);">
+                Connessione all'endpoint RPC in corso...
+              </td>
             </tr>
           </tbody>
         </table>
@@ -639,23 +582,15 @@
       <a href="index.html">Back to LUXA Website</a>
     </p>
     <p style="margin-top: 8px; font-size: 0.7rem; opacity: 0.6;">
-      Data refreshed every 2 seconds. Explorer powered by LUXA Ecosystem.
+      Dati reali trasmessi dal nodo Cosmos CometBFT via Cloudflare Tunnel.
     </p>
   </footer>
 
   <script>
     const RPC_URL = "https://rpc.luxaecosystem.xyz";
+    let lastRenderedHeight = 0;
 
-    // Dati iniziali (dal tuo nodo reale)
-    const initialData = {
-      blockHeight: 7473,
-      chainId: "luxa-1",
-      moniker: "luxa-genesis-validator",
-      timestamp: "16:51:37",
-      blockHash: "E7AAE19D28902E1DA2BF8A50BB6C6011D8B56359CF39315016DD1DFD3E9AEF35",
-      proposer: "EA2B6275ED04C0B375DEE2809CAF83078A538938"
-    };
-
+    // Recupera lo stato attuale e i blocchi reali
     async function fetchChainStatus() {
       try {
         const res = await fetch(`${RPC_URL}/status`, { 
@@ -667,35 +602,81 @@
         const data = await res.json();
         const sync = data.result.sync_info;
         const node = data.result.node_info;
+        const currentHeight = parseInt(sync.latest_block_height, 10);
 
-        // FIX: Proposer address con fallback corretto
-        const proposerAddr = data.result.validator_info?.address || sync.latest_app_hash || "N/A";
+        // Validatore reale
+        const proposerAddr = data.result.validator_info?.address || "EA2B6275ED04C0B375DEE2809CAF83078A538938";
 
-        document.getElementById("block-height").innerText = "#" + Number(sync.latest_block_height).toLocaleString();
-        document.getElementById("block-height-raw").innerText = "Block #" + sync.latest_block_height;
+        // Aggiorna Header e Box
+        document.getElementById("block-height").innerText = "#" + currentHeight.toLocaleString();
+        document.getElementById("block-height-raw").innerText = "Block #" + currentHeight;
         document.getElementById("network-id").innerText = node.network;
         document.getElementById("node-moniker").innerText = node.moniker;
         document.getElementById("block-time").innerText = new Date(sync.latest_block_time).toLocaleTimeString();
+        
         document.getElementById("block-hash").innerHTML = 
           sync.latest_block_hash + 
           `<button class="copy-btn" onclick="copyToClipboard(this, '${sync.latest_block_hash}')"><i class="fas fa-copy"></i> Copy</button>`;
+        
         document.getElementById("proposer-addr").innerHTML = 
           proposerAddr + 
           `<button class="copy-btn" onclick="copyToClipboard(this, '${proposerAddr}')"><i class="fas fa-copy"></i> Copy</button>`;
 
-        // Status dot verde
+        // Aggiorna indicatore
         document.querySelector(".status-dot").style.background = "var(--success)";
         document.querySelector(".status-dot").style.boxShadow = "0 0 12px rgba(34, 197, 94, 0.6)";
         document.querySelector(".status-live span").innerText = "LIVE (SYNCED)";
         document.querySelector(".status-live span").style.color = "var(--success)";
 
+        // Se l'altezza del blocco è avanzata, scarica i veri blocchi recenti
+        if (currentHeight !== lastRenderedHeight) {
+          lastRenderedHeight = currentHeight;
+          await fetchRealRecentBlocks(currentHeight, proposerAddr);
+        }
+
       } catch (err) {
-        console.error("RPC Error:", err);
-        // Mantieni i dati iniziali, mostra warning
+        console.error("RPC Status Error:", err);
         document.querySelector(".status-dot").style.background = "var(--warning)";
         document.querySelector(".status-dot").style.boxShadow = "0 0 12px rgba(245, 158, 11, 0.6)";
-        document.querySelector(".status-live span").innerText = "RPC LIMITATO — DATI CACHED";
+        document.querySelector(".status-live span").innerText = "DISCONNESSO O NON RAGGIUNGIBILE";
         document.querySelector(".status-live span").style.color = "var(--warning)";
+      }
+    }
+
+    // Chiamata all'endpoint nativo CometBFT per ottenere gli ultimi 6 blocchi reali
+    async function fetchRealRecentBlocks(maxHeight, defaultProposer) {
+      const minHeight = Math.max(1, maxHeight - 5);
+      try {
+        const res = await fetch(`${RPC_URL}/blockchain?minHeight=${minHeight}&maxHeight=${maxHeight}`);
+        if (!res.ok) return;
+        const json = await res.json();
+        
+        const blockMetas = json.result?.block_metas || [];
+        if (blockMetas.length === 0) return;
+
+        const tbody = document.getElementById("blocks-tbody");
+        tbody.innerHTML = blockMetas.map(b => {
+          const h = b.header.height;
+          const fullHash = b.block_id.hash;
+          const shortHash = fullHash.substring(0, 8) + '...' + fullHash.substring(fullHash.length - 4);
+          const time = new Date(b.header.time).toLocaleTimeString();
+          const txs = b.num_txs || 0;
+          const proposer = b.header.proposer_address || defaultProposer;
+          const shortProposer = proposer.substring(0, 8) + '...' + proposer.substring(proposer.length - 4);
+
+          return `
+            <tr>
+              <td><span class="block-link">#${Number(h).toLocaleString()}</span></td>
+              <td title="${fullHash}"><span style="color: var(--accent-light);">${shortHash}</span></td>
+              <td>${time}</td>
+              <td><span class="tx-count"><i class="fas fa-check-circle"></i> ${txs}</span></td>
+              <td title="${proposer}"><span style="color: var(--primary-light);">${shortProposer}</span></td>
+            </tr>
+          `;
+        }).join("");
+
+      } catch (e) {
+        console.warn("Errore caricamento lista blocchi:", e);
       }
     }
 
@@ -708,7 +689,7 @@
         setTimeout(() => {
           btn.classList.remove("spinning");
           btn.innerHTML = '<i class="fas fa-sync-alt"></i> Aggiorna';
-        }, 800);
+        }, 600);
       });
     }
 
@@ -724,7 +705,7 @@
       });
     }
 
-    // Avvia
+    // Esegui subito e poi aggiorna ogni 2 secondi
     fetchChainStatus();
     setInterval(fetchChainStatus, 2000);
   </script>
